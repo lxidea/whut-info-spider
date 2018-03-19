@@ -35,4 +35,4 @@ if __name__ == '__main__':
     #page = fetcher.fetch("http://www.baidu.com")
     myparser = webparser("http://i.whut.edu.cn")
     soup = myparser.stew()
-    grablist = [[addr.string, addr.get("href")] for addr in soup.find("div","in_nav").find_all("a") if "i.whut.edu.cn/" in addr.get("href")]
+    grablist = [[addr.string.title(), addr.get("href")] for addr in soup.find("div","in_nav").find_all("a") if "i.whut.edu.cn/" in addr.get("href")]
