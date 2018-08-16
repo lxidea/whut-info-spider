@@ -23,7 +23,21 @@ class webparser(object):
         self.is_redirect = response.is_redirect
         self.history = response.history
         #self.stew()
-    def stew(self):
+    def stew(self, _url):
+        if _url!=None:
+            response = fetcher.fetch(_url)
+            self.htmltext = response.text
+            self.content = response.content
+            self.status = response.status_code
+            self.code_reason = response.reason
+            self.time_cost = response.elapsed
+            self.url = response.url
+            self.ok = response.ok
+            self.encoding = response.encoding
+            self.cookie = response.cookies
+            self.header = response.headers
+            self.is_redirect = response.is_redirect
+            self.history = response.history
         self.soup = BeautifulSoup(self.content, 'html.parser')
         return self.soup
     def text(self):
