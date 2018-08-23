@@ -59,9 +59,34 @@ class whutparser(object):
                 item.setCat(clist[idx][0],clist[idx][1])
             whutItems.append(item)
         return whutItems
-    def getNewsListPages(self, cat, page):
-        """retrieve list page of news by category and pageNum"""
-        pass
+    def getNewsListPages(self, para, page):
+        """retrieve list page of news by category link and pageNum"""
+        if len(self.catlist)==0 or len(self.faclist)==0:
+            self.getCategory_andfacultyLink()
+        if len(para) == 0:
+            return None,None
+        if 'index' in para:
+            url = para[:para.find('index')-1]
+        elif 'whut.edu.cn' in para:
+            url = para
+        else:
+            idx = [li[0] for li in (self.catlist + self.faclist)].index(para)
+            if idx<0:
+                return -1,None
+            url = [li[1] for li in (self.catlist + self.faclist)][idx]
+        self.parser.stew(url)
+        txt = self.parser.soup.find_all('script')[3].get_text()
+        Keyword = 'createPageHTML'
+        Keyword2 = Keyword + '('
+        pageMaxStr = txt[txt.find(Keyword)+len(Keyword2):txt.find(',',txt.find(Keyword))]
+        pageMax = int(pageMaxStr)
+        if page>=pageMax or page<0:
+            return pageMax,None
+        if page!=0 and url.endswith('/'):
+            url = url + 'index_' + str(page) + '.shtml'
+        elif page!=0:
+            url = url + '/index_' + str(page) + '.shtml'
+        return pageMax,self.getNewsListPage(url)
     def getNewsPage(self, link):
         """return whutNewsContent Object by address"""
         self.parser.stew(link)
