@@ -16,20 +16,23 @@ class fetcher(object):
 		if _proxy is None:
 			return requests.get(_url)
 		elif type(_proxy) is str and _proxy == "system":
-			return requests.get(_url,proxies=urllib.getproxies())
+			return requests.get(_url,proxies=urllib.getproxies(),
+                                            timeout = 5)
 		elif type(_proxy) is dict and _proxy.has_key("http"):
 			proxy = dict()
-			for protocal in "http" "https" "ftp":
-				try:
+			for protocal in ["http","https","ftp"]:
+				if _proxy.has_key(protocal):
 					proxy[protocal] = _proxy.get(protocal)
-				except:
-					proxy[protocal] = _proxy.get("http")
-			return requests.get(_url,proxies=proxy).close()
+			if len(proxy)==0:
+				proxy = None
+			req = requests.get(_url,proxies=proxy,timeout=5)
+			req.close()
+			return req
 	@staticmethod
 	def clear_cache(self):
 		requests_cache.clear()
 
 if __name__ == '__main__':
-	page = fetcher.fetch("http://www.baidu.com")
+	page = fetcher.fetch("http://i.whut.edu.cn")
 	print page.status_code, page.reason
 	print 'time used',page.elapsed
