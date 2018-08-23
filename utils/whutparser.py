@@ -12,6 +12,8 @@ class whutparser(object):
         super(whutparser, self).__init__()
         #self.arg = arg
         self.root = "i.whut.edu.cn"
+        self.catlist = []
+        self.faclist = []
         self.parser = webparser()
     def setProxy(self, proxy):
         self.parser.setProxy(proxy)
