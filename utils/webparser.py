@@ -36,7 +36,7 @@ class webparser(object):
         else:
             return _url
     def cleanMe(self, soup):
-        [x.extract() for x in soup.find_all('script')]
+        #[x.extract() for x in soup.find_all('script')]
         [x.extract() for x in soup.find_all('style')]
         [x.extract() for x in soup.find_all('meta')]
         [x.extract() for x in soup.find_all('noscript')]
