@@ -22,6 +22,8 @@ class whutparser(object):
         if _url.startswith('.') and flag is not None:
             if self.parser.url.endswith('/') and _url.startswith('./'):
                 return _url.replace('.',self.parser.url[:-1].replace('http://','',1),1)
+            elif self.parser.url.find('index')>=0 and _url.startswith('./'):
+                return _url.replace('.',self.parser.url[:self.parser.url.index('/index')].replace('http://','',1),1)
             elif self.parser.url.endswith('shtml') and _url.startswith('./'):
                 return _url.replace('.',self.parser.url[:self.parser.url.index('/t')].replace('http://','',1),1)
             else:
