@@ -7,13 +7,12 @@ from redis import Redis
 
 class redisconn(object):
     """redis connection class"""
-    def __init__(self, host='localhost', port=6379, db=0, blockNum=1, key='queue'):
+    def __init__(self, host='localhost', port=6379, db=0):
         """
         :param host: the host of Redis
         :param port: the port of Redis
         :param db: witch db in Redis
         :param blockNum: one blockNum for about 90,000,000; if you have more strings for filtering, increase it.
-        :param key: the key's name in Redis
         """
         super(redisconn, self).__init__()
         self.q = Queue(connection = Redis(host=host, port=port, db=db))

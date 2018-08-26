@@ -10,8 +10,6 @@ INI_FILE = """[Redis-Queue]
 host = localhost
 port = 6379
 db = 0
-blockNum = 1
-key = queue
 
 [bloomfilter]
 host = localhost
@@ -26,7 +24,7 @@ port = 3306
 user = root
 passwd =
 db =
-charset = utf8
+charset = utf8mb4
 """
 
 class config(object):
@@ -52,8 +50,6 @@ class config(object):
         self.host = configer.get('Redis-Queue','host')
         self.port = configer.get('Redis-Queue','port')
         self.db = configer.get('Redis-Queue','db')
-        self.blockNum = configer.get('Redis-Queue','blockNum')
-        self.key = configer.get('Redis-Queue','key')
         self.bhost = configer.get('bloomfilter','host')
         self.bport = configer.get('bloomfilter','port')
         self.bdb = configer.get('bloomfilter','db')
@@ -81,7 +77,6 @@ if __name__ == '__main__':
         print "config file not exists, created automatically"
     print "[Redis-Queue]"
     print "host:",my.host,"\nport:",my.port,"\ndb:",my.db
-    print "blockNum:",my.blockNum,"\nkey:",my.key
     print "[bloomfilter]"
     print "host:",my.bhost,"\nport:",my.bport,"\ndb:",my.bdb
     print "blockNum:",my.bblockNum,"\nkey:",my.bkey
