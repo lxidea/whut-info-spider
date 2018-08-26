@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 class whutNewsItem(object):
     """News Item class for storing info of a single item."""
     def __init__(self, link, title):
@@ -15,7 +16,7 @@ class whutNewsItem(object):
         self.catName = name
     def setContent(self, wc):
         self.content = wc
-        self.content
+
 
 class whutNewsContent(object):
     """News Content class for storing main context of the news."""

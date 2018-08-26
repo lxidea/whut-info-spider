@@ -5,6 +5,7 @@ from fetcher import fetcher
 import requests,datetime
 from bs4 import BeautifulSoup
 
+
 class webparser(object):
     """docstring for webparser"""
     def __init__(self, _url=None, proxy=None):

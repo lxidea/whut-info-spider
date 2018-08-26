@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 import requests,urllib
 import requests_cache
+
 
 requests_cache.install_cache('test_cache', backend='sqlite', expire_after=300)
 

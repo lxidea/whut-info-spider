@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from newsitem import *
 from markdownify import markdownify as md
 
+
 class whutparser(object):
     """parser to fetch contents."""
     def __init__(self):
