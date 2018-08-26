@@ -19,6 +19,14 @@ port = 6379
 db = 1
 blockNum = 1
 key = bloomfilter
+
+[sql]
+host = localhost
+port = 3306
+user = root
+passwd =
+db =
+charset = utf8
 """
 
 class config(object):
@@ -51,6 +59,12 @@ class config(object):
         self.bdb = configer.get('bloomfilter','db')
         self.bblockNum = configer.get('bloomfilter','blockNum')
         self.bkey = configer.get('bloomfilter','key')
+        self.shost = configer.get('sql','host')
+        self.sport = configer.get('sql','port')
+        self.suser = configer.get('sql','user')
+        self.spass = configer.get('sql','passwd')
+        self.sdb = configer.get('sql','db')
+        self.charset = configer.get('sql','charset')
 
     def rq_config(self):
         return self.host, self.port, self.db, self.blockNum, self.key
@@ -58,13 +72,19 @@ class config(object):
     def bf_config(self):
         return self.bhost, self.bport, self.bdb, self.bblockNum, self.bkey
 
+    def sql_conf(self):
+        return self.shost,self.sport,self.suser,self.spass,self.sdb,self.charset
+
 if __name__ == '__main__':
     my = config()
     if not my.ok:
         print "config file not exists, created automatically"
-    print "Redis-Queue"
+    print "[Redis-Queue]"
     print "host:",my.host,"\nport:",my.port,"\ndb:",my.db
     print "blockNum:",my.blockNum,"\nkey:",my.key
-    print "bloomfilter"
+    print "[bloomfilter]"
     print "host:",my.bhost,"\nport:",my.bport,"\ndb:",my.bdb
     print "blockNum:",my.bblockNum,"\nkey:",my.bkey
+    print "[sql]"
+    print "host:",my.shost,"\nport:",my.sport,"\ndb:",my.sdb
+    print "user:",my.suser,"\npasswd:",my.spass,'\ncharset:',my.charset
