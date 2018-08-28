@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import pymysql.cursors
+import warnings,pymysql.err
+warnings.filterwarnings('error', category=pymysql.err.Warning)
 
 class sqlconn(object):
     """sql connection class."""
@@ -26,12 +28,12 @@ class sqlconn(object):
      primKeys=[], forgkeys=[], reftabs=[], refkeys=[], charset='utf8mb4'):
         lens = [len(fieldlist),len(typelist),len(attribs)]
         if max(lens)!=min(lens):
-            return False
+            return False, 'parameters not match'
         if len(primKeys)==0:
-            return False
+            return False, 'no primary key'
         lens = [len(forgkeys),len(reftabs),len(refkeys)]
         if max(lens)!=min(lens):
-            return False
+            return False, 'foreign keys not match'
         if temp:
             tempstr = "temporary"
         else:
@@ -52,13 +54,15 @@ class sqlconn(object):
             forkstrs = ''
         tabopts = ') Engine=InnoDB default charset=' + charset + ' collate=' + charset + '_bin'
         sql += cdefs + ',' + primstr + forkstrs + tabopts
-        with self.connection.cursor() as cursor:
-            cursor.execute(sql)
-
-        self.connection.commit()
-        return True
-        #except:
-        #return False
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(sql)
+            self.connection.commit()
+        except pymysql.err.Warning as e:
+            return True, e
+        except pymysql.err.Error as e:
+            return False, e
+        return True, None
 
     def insert(self, table, keylist, valuelist):
         if table is None or len(table)==0:
