@@ -56,13 +56,13 @@ class sqlconn(object):
         sql += cdefs + ',' + primstr + forkstrs + tabopts
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute(sql)
+                self.result = cursor.execute(sql)
             self.connection.commit()
         except pymysql.err.Warning as e:
             return True, e
         except pymysql.err.Error as e:
             return False, e
-        return True, None
+        return True, self.result
 
     def insert(self, table, keylist, valuelist):
         if table is None or len(table)==0:
@@ -74,22 +74,40 @@ class sqlconn(object):
         keystr = ', '.join(['`'+x+'`' for x in keylist])
         values = tuple(valuelist)
         formats = ', '.join(['%s']*len(values))
-        print keystr
-        print values
-        sql = "INSERT INTO ``" + table + "`` (" + keystr + ") VALUES (" + formats + ")"
+        sql = "INSERT INTO `" + table + "` (" + keystr + ") VALUES (" + formats + ")"
         print sql
-        with self.connection.cursor() as cursor:
-            cursor.execute(sql, values)
+        try:
+            with self.connection.cursor() as cursor:
+                self.result = cursor.execute(sql, values)
+            self.connection.commit()
+        except pymysql.err.Warning as e:
+            return True, e
+        except pymysql.err.Error as e:
+            return False, e
+        return True, self.result
 
-        self.connection.commit()
+    def dropTab(self, table):
+        if table is None or len(len)==0:
+            return False, 'invalid table name'
+        sql = 'drop table ' + table
+        try:
+            with self.connection.cursor() as cursor:
+                self.result = cursor.execute(sql, values)
+            self.connection.commit()
+        except pymysql.err.Warning as e:
+            return True, e
+        except pymysql.err.Error as e:
+            return False, e
+        return True, self.result
 
 if __name__ == '__main__':
     conn = sqlconn('localhost',3307,'root','usbw')
     if conn.connection.open:
         print 'opened'
         print conn.createTab('article',False,True,
-        ['id','title','link','content','keyword_id','category_id','datetime','source_id','attachment_id'],
-         ['bigint','varchar(100)','varchar(120)','text','int','int','date','int','int'],
-          ['auto_increment','not null','not null','not null','not null','not null','not null','not null','not null'],
+        ['id','title','link','content','keyword_id','category_id','datetime','source_id'],
+         ['bigint','varchar(100)','varchar(120)','text','int','int','date','int'],
+          ['auto_increment','not null','not null','not null','not null','not null','not null','not null'],
            ['id'], [], [], [], 'utf8mb4')
-        #conn.insert('tab',['name','key','passwd'],['John',2,'123456'])
+        print conn.insert('article',['title','link','content','keyword_id','category_id','datetime','source_id']
+        ,['test','http://i.whut.edu.cn','test text content',1,1,'2018-08-28',1])
