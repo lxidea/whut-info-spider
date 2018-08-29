@@ -40,7 +40,8 @@ class whutparser(object):
         facultyName = [namespan.find("h2").string.split()[0] for namespan in self.parser.soup.find_all("div","tit_box6")]
         facultyLink = [self.fullurl(c.find("a").get("href")) for c in self.parser.soup.find_all("div","tit_box6")]
         self.faclist = [[name, facultyLink[idx]] for idx,name in enumerate(facultyName)]
-    def getNewsListPage(self, _url):
+
+    def getNewsfromListPage(self, _url):
         """return a list of whutItems object"""
         #print _url
         self.parser.stew(_url)
@@ -60,7 +61,26 @@ class whutparser(object):
                 item.setCat(clist[idx][0],clist[idx][1])
             whutItems.append(item)
         return whutItems
-    def getNewsListPages(self, para, page):
+
+    def getNewsListPages(self, name, root):
+        """get page lists from category link"""
+        url = root
+        self.parser.stew(url)
+        txt = self.parser.soup.find_all('script')[3].get_text()
+        Keyword = 'createPageHTML'
+        Keyword2 = Keyword + '('
+        pageMaxStr = txt[txt.find(Keyword)+len(Keyword2):txt.find(',',txt.find(Keyword))]
+        pageMax = int(pageMaxStr)
+        pages = []
+        for page in range(pageMax):
+            if page!=0 and url.endswith('/'):
+                url = url + 'index_' + str(page) + '.shtml'
+            elif page!=0:
+                url = url + '/index_' + str(page) + '.shtml'
+            pages.append(url)
+        return pages
+
+    def getNewsListPage(self, para, page):
         """retrieve list page of news by category link and pageNum"""
         if len(self.catlist)==0 or len(self.faclist)==0:
             self.getCategory_andfacultyLink()
@@ -88,6 +108,7 @@ class whutparser(object):
         elif page!=0:
             url = url + '/index_' + str(page) + '.shtml'
         return pageMax,self.getNewsListPage(url)
+
     def getNewsPage(self, link):
         """return whutNewsContent Object by address"""
         self.parser.stew(link)
@@ -98,6 +119,7 @@ class whutparser(object):
         date = info[-1][3:]
         url = self.parser.url
         return whutNewsContent(title,url,content,date,publisher)
+
     def getNewsContent(self, whutitem):
         """return whutNewsContent Object by whutitem object"""
         self.parser.stew(whutitem.link)
@@ -113,12 +135,14 @@ class whutparser(object):
             attachs = []
             for attach in attachments:
                 attachs.append(whutNewsAttachment(attach.text,self.fullurl(attach.get('href'),1)))
-        return self.parser.soup, whutNewsContent(title,url,content,date,publisher,attachs)
+        return whutNewsContent(title,url,content,date,publisher,attachs)
 
 if __name__ == '__main__':
     proxy = {'http':'socks5://ftp.lxidea.org:26222'}
     myparser = whutparser()
     myparser.setProxy(proxy)
     myparser.getCategory_and_facultyLink()
-    entries = myparser.getNewsListPage(myparser.catlist[0][1])
+    entries = myparser.getNewsfromListPage(myparser.catlist[0][1])
+    for li in myparser.catlist:
+        print li[0],li[1]
     soup, news = myparser.getNewsContent(entries[1])
