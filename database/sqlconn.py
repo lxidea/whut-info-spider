@@ -65,6 +65,8 @@ class sqlconn(object):
         return True, self.result
 
     def insert(self, table, keylist, valuelist):
+        """insert table, require tab_name, keylist, valuelist as argument,
+        return True or False, affected rows or failure reason"""
         if table is None or len(table)==0:
             return False
         if type(keylist) is not list or type(valuelist) is not list:
