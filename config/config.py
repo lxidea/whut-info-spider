@@ -6,7 +6,12 @@ import os.path
 import sys
 
 codetype = sys.getfilesystemencoding()
-INI_FILE = """[Redis-Queue]
+INI_FILE = """[proxy]
+protocal = socks5
+host =
+port =
+
+[Redis-Queue]
 host = localhost
 port = 6379
 db = 0
@@ -47,6 +52,9 @@ class config(object):
             myconfig = f.read().decode(codetype).encode("utf-8")
         configer = ConfigParser.RawConfigParser(allow_no_value=True)
         configer.readfp(io.BytesIO(myconfig))
+        self.protocal = configer.get('proxy','protocal')
+        self.phost = configer.get('proxy','host')
+        self.pport = configer.get('proxy','port')
         self.host = configer.get('Redis-Queue','host')
         self.port = configer.get('Redis-Queue','port')
         self.db = configer.get('Redis-Queue','db')
@@ -70,6 +78,11 @@ class config(object):
 
     def sql_conf(self):
         return self.shost,self.sport,self.suser,self.spass,self.sdb,self.charset
+
+    def proxy(self):
+        if self.phost is not None and len(self.phost)>0:
+            return self.protocal + "://" + self.phost + ":" + self.pport
+        return None
 
 if __name__ == '__main__':
     my = config()
