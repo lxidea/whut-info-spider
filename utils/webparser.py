@@ -57,8 +57,9 @@ class webparser(object):
             self.header = response.headers
             self.is_redirect = response.is_redirect
             self.history = response.history
-        self.soup = BeautifulSoup(self.content, 'html.parser')
-        return self.cleanMe(self.soup)
+            self.soup = BeautifulSoup(self.content, 'html.parser')
+            return self.cleanMe(self.soup)
+        return None
     def text(self):
         return self.htmltext
     def content(self):
