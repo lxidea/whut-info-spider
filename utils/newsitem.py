@@ -40,6 +40,7 @@ class whutNewsContent(object):
         elif type(attachs) is list:
             self.attachs.extend(attachs)
 
+
 class whutNewsAttachment(object):
     """News Attachment stores the link and name of the main content."""
     def __init__(self, name, link):
