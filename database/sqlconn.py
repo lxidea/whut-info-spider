@@ -7,16 +7,25 @@ warnings.filterwarnings('error', category=pymysql.err.Warning)
 
 class sqlconn(object):
     """sql connection class."""
-    def __init__(self, host='localhost', port=3306, user='root', passwd='root', db='whut', charset='utf8mb4'):
+    def __init__(self, host='localhost', port=3306, user='root', passwd='root', db='whut', charset='utf8mb4', unix_socket=None):
         super(sqlconn, self).__init__()
         try:
-            self.connection = pymysql.connect(host=host,
-                             port=port,
-                             user=user,
-                             password=passwd,
-                             db=db,
-                             charset=charset,
-                             cursorclass=pymysql.cursors.DictCursor)
+            if unix_socket is None:
+                self.connection = pymysql.connect(host=host,
+                                 port=port,
+                                 user=user,
+                                 password=passwd,
+                                 db=db,
+                                 charset=charset,
+                                 cursorclass=pymysql.cursors.DictCursor)
+            else:
+                self.connection = pymysql.connect(host=host,
+                                 user=user,
+                                 password=passwd,
+                                 db=db,
+                                 charset=charset,
+                                 unix_socket=unix_socket,
+                                 cursorclass=pymysql.cursors.DictCursor)
         except pymysql.err.OperationalError as e:
             raise(e)
 
@@ -107,7 +116,7 @@ class sqlconn(object):
             self.dropTab(tab)
 
 if __name__ == '__main__':
-    conn = sqlconn('localhost',3307,'root','usbw')
+    conn = sqlconn('localhost',3307,'root','usbw', 'whut', 'utf8mb4', '/var/run/mysqld/mysqld.sock')
     if conn.connection.open:
         print 'opened'
         print conn.createTab('keyword',['id','value'],['bigint','varchar(100)'],['auto_increment','not null'],['id'])
