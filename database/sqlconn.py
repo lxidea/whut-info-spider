@@ -15,6 +15,26 @@ class sqlconn(object):
                                  port=port,
                                  user=user,
                                  password=passwd,
+                                 charset=charset,
+                                 cursorclass=pymysql.cursors.DictCursor)
+            else:
+                self.connection = pymysql.connect(host=host,
+                                 user=user,
+                                 password=passwd,
+                                 charset=charset,
+                                 unix_socket=unix_socket,
+                                 cursorclass=pymysql.cursors.DictCursor)
+            sql = 'CREATE DATABASE IF NOT EXISTS' + db
+            self.connection.cursor().execute(sql)
+            self.connection.close()
+        except:
+            pass
+        try:
+            if unix_socket is None:
+                self.connection = pymysql.connect(host=host,
+                                 port=port,
+                                 user=user,
+                                 password=passwd,
                                  db=db,
                                  charset=charset,
                                  cursorclass=pymysql.cursors.DictCursor)
@@ -116,7 +136,7 @@ class sqlconn(object):
             self.dropTab(tab)
 
 if __name__ == '__main__':
-    conn = sqlconn('localhost',3307,'root','usbw', 'whut', 'utf8mb4', '/var/run/mysqld/mysqld.sock')
+    conn = sqlconn('localhost',3307,'root','qlnEnae7', 'whut', 'utf8mb4', '/var/run/mysqld/mysqld.sock')
     if conn.connection.open:
         print 'opened'
         print conn.createTab('keyword',['id','value'],['bigint','varchar(100)'],['auto_increment','not null'],['id'])
