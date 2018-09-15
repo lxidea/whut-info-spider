@@ -15,6 +15,26 @@ class sqlconn(object):
                                  port=port,
                                  user=user,
                                  password=passwd,
+                                 charset=charset,
+                                 cursorclass=pymysql.cursors.DictCursor)
+            else:
+                self.connection = pymysql.connect(host=host,
+                                 user=user,
+                                 password=passwd,
+                                 charset=charset,
+                                 unix_socket=unix_socket,
+                                 cursorclass=pymysql.cursors.DictCursor)
+            sql = 'CREATE DATABASE IF NOT EXISTS' + db
+            self.connection.cursor().execute(sql)
+            self.connection.close()
+        except:
+            pass
+        try:
+            if unix_socket is None:
+                self.connection = pymysql.connect(host=host,
+                                 port=port,
+                                 user=user,
+                                 password=passwd,
                                  db=db,
                                  charset=charset,
                                  cursorclass=pymysql.cursors.DictCursor)
