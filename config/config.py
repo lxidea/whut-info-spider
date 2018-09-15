@@ -26,6 +26,8 @@ key = bloomfilter
 [sql]
 host = localhost
 port = 3306
+unix_sock = /var/run/mysqld/mysqld.sock
+using_socket = false
 user = root
 passwd =
 db =
@@ -68,6 +70,14 @@ class config(object):
         self.suser = configer.get('sql','user')
         self.spass = configer.get('sql','passwd')
         self.sdb = configer.get('sql','db')
+        self.sunix_sock = configer.get('sql','unix_sock')
+        self.using_sock = configer.get('sql','using_socket')
+        if self.using_sock == 'true':
+            pass
+        elif self.using_sock == 'false':
+            pass
+        else:
+            raise Exception("wrong options for using_socket")
         self.charset = configer.get('sql','charset')
 
     def rq_config(self):
@@ -77,7 +87,9 @@ class config(object):
         return self.bhost, self.bport, self.bdb, self.bblockNum, self.bkey
 
     def sql_conf(self):
-        return self.shost,self.sport,self.suser,self.spass,self.sdb,self.charset
+        if self.using_sock == 'true':
+            pass
+        return self.shost,self.sport,self.suser,self.spass,self.sdb,self.sunix_sock,self.using_sock,self.charset
 
     def proxy(self):
         if self.phost is not None and len(self.phost)>0:
