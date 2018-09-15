@@ -3,6 +3,7 @@
 
 import pymysql.cursors
 import warnings,pymysql.err
+import os,sys
 warnings.filterwarnings('error', category=pymysql.err.Warning)
 
 class sqlconn(object):
@@ -24,8 +25,9 @@ class sqlconn(object):
                                  charset=charset,
                                  unix_socket=unix_socket,
                                  cursorclass=pymysql.cursors.DictCursor)
-            sql = 'CREATE DATABASE IF NOT EXISTS' + db
+            sql = 'CREATE DATABASE IF NOT EXISTS ' + db
             self.connection.cursor().execute(sql)
+            self.connection.commit()
             self.connection.close()
         except:
             pass
@@ -136,7 +138,13 @@ class sqlconn(object):
             self.dropTab(tab)
 
 if __name__ == '__main__':
-    conn = sqlconn('localhost',3307,'root','qlnEnae7', 'whut', 'utf8mb4', '/var/run/mysqld/mysqld.sock')
+    if os.name == 'nt':
+        conn = sqlconn('localhost',3307,'root','usbw', 'whut', 'utf8mb4')
+    elif os.name == 'posix':
+        conn = sqlconn('localhost',3307,'root','qlnEnae7', 'whut', 'utf8mb4', '/var/run/mysqld/mysqld.sock')
+    else:
+        print 'unsupport operation system'
+        sys.exit(0)
     if conn.connection.open:
         print 'opened'
         print conn.createTab('keyword',['id','value'],['bigint','varchar(100)'],['auto_increment','not null'],['id'])
