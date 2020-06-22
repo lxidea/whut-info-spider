@@ -18,6 +18,13 @@ class whutparser(object):
         self.faclist = []
         self.parser = webparser()
 
+    def getMaxPage(self):
+        txt = str(self.parser.soup.find("div", {"class":"num_nav"}))
+        Keyword = 'createPageHTML'
+        Keyword2 = Keyword + '('
+        pageMaxStr = txt[txt.find(Keyword) + len(Keyword2):txt.find(',', txt.find(Keyword))]
+        return int(pageMaxStr)
+
     def setProxy(self, proxy):
         self.parser.setProxy(proxy)
 
@@ -74,11 +81,7 @@ class whutparser(object):
         """get page lists from category link"""
         url = root
         self.parser.stew(url)
-        txt = str(self.parser.soup.find("div", {"class":"num_nav"}))
-        Keyword = 'createPageHTML'
-        Keyword2 = Keyword + '('
-        pageMaxStr = txt[txt.find(Keyword) + len(Keyword2):txt.find(',', txt.find(Keyword))]
-        pageMax = int(pageMaxStr)
+        pageMax = self.getMaxPage()
         pages = []
         for page in range(pageMax):
             if page != 0 and root.endswith('/'):
@@ -104,18 +107,14 @@ class whutparser(object):
                 return -1, None
             url = [li[1] for li in (self.catlist + self.faclist)][idx]
         self.parser.stew(url)
-        txt = self.parser.soup.find_all('script')[3].get_text()
-        Keyword = 'createPageHTML'
-        Keyword2 = Keyword + '('
-        pageMaxStr = txt[txt.find(Keyword) + len(Keyword2):txt.find(',', txt.find(Keyword))]
-        pageMax = int(pageMaxStr)
+        pageMax = self.getMaxPage()
         if page >= pageMax or page < 0:
             return pageMax, None
         if page != 0 and url.endswith('/'):
             url = url + 'index_' + str(page) + '.shtml'
         elif page != 0:
             url = url + '/index_' + str(page) + '.shtml'
-        return pageMax, self.getNewsListPage(url)
+        return pageMax, self.getNewsfromListPage(url)
 
     def getNewsPage(self, link):
         """return whutNewsContent Object by address"""
